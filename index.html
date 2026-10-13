@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>송쌤과학 AI 보이스 스튜디오</title>
+<meta name="description" content="글을 넣으면 AI 목소리 음원을 만들어 바로 저장해요. 글과 소리는 내 기기 안에서만 처리합니다.">
+<meta property="og:title" content="송쌤과학 AI 보이스 스튜디오">
+<meta property="og:description" content="글을 넣으면 AI 목소리 음원을 만들어 바로 저장해요.">
+<meta name="theme-color" content="#4c1a2f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23782b4b'/%3E%3Cpath d='M9 13v6M13 10v12M17 8v16M21 11v10M25 14v4' stroke='%23fce8f1' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.447.0/dist/umd/lucide.min.js"></script>
+<script>try{var t=localStorage.getItem('ss.theme');if(t)document.documentElement.dataset.theme=t;if(localStorage.getItem('ss.rail')==='1')document.documentElement.classList.add('rail-collapsed')}catch(e){}</script>
+  <script type="module" crossorigin src="./assets/index-CPaQwE0L.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CGW-OL8e.css">
+</head>
+<body>
+<!-- ① 도구 막대: 대본 · 예시 · 개인정보 배지 · 채널 | 실행 취소 · 다시 실행 · 모두 지우기 -->
+<div class="top-bar" role="toolbar" aria-label="대본과 편집 기록">
+  <button class="file-current" id="openBtn" type="button" title="글 파일(.txt) 불러오기 (Ctrl+O)"><i data-lucide="file-text"></i><small>대본</small><strong id="scriptName">새 대본</strong><i data-lucide="chevron-down"></i></button>
+  <button class="bar-accent" id="sampleBtn" type="button" title="선생님과 학생이 주고받는 예시 대본 넣기"><i data-lucide="message-square-text"></i><span class="label">예시 대본</span></button>
+  <button class="local-badge" type="button" data-open="help" title="글과 소리는 외부로 전송되지 않아요 · 도움말 보기"><i data-lucide="lock"></i><span>내 기기에서만 처리</span></button>
+  <div class="social" role="group" aria-label="송쌤과학 채널">
+    <a href="https://www.youtube.com/@songsamscience" target="_blank" rel="noopener noreferrer" title="송쌤과학 유튜브 · 새 탭에서 열기" aria-label="송쌤과학 유튜브 (새 탭)"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M21.58 7.19a2.88 2.88 0 0 0-2.03-2.04C17.76 4.67 12 4.67 12 4.67s-5.76 0-7.55.48a2.88 2.88 0 0 0-2.03 2.04A30.1 30.1 0 0 0 1.94 12a30.1 30.1 0 0 0 .48 4.81 2.88 2.88 0 0 0 2.03 2.04c1.79.48 7.55.48 7.55.48s5.76 0 7.55-.48a2.88 2.88 0 0 0 2.03-2.04 30.1 30.1 0 0 0 .48-4.81 30.1 30.1 0 0 0-.48-4.81Z"/><path class="yt-play" d="m10 15.18 5.2-3.18L10 8.82Z"/></svg></a>
+    <a href="https://www.instagram.com/songsamscience/" target="_blank" rel="noopener noreferrer" title="송쌤과학 인스타그램 · 새 탭에서 열기" aria-label="송쌤과학 인스타그램 (새 탭)"><span class="ig-mark"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.6" cy="6.4" r="1" fill="currentColor" stroke="none"/></svg></span></a>
+  </div>
+  <span class="bar-spacer"></span>
+  <button id="undoBtn" type="button" title="실행 취소 (Ctrl+Z)" aria-label="실행 취소" disabled><i data-lucide="undo-2"></i><span class="label">실행 취소</span></button>
+  <button id="redoBtn" type="button" title="다시 실행 (Ctrl+Y)" aria-label="다시 실행" disabled><i data-lucide="redo-2"></i><span class="label">다시 실행</span></button>
+  <button id="resetBtn" type="button" title="대본 모두 지우기" aria-label="모두 지우기"><i data-lucide="eraser"></i><span class="label">모두 지우기</span></button>
+</div>
+
+<!-- ② 흰 헤더: 브랜드 · 한 줄 맥락 + 오늘 날짜 · 주요 동작 -->
+<header class="app-header">
+  <a class="brand" href="./" aria-label="송쌤과학 AI 보이스 스튜디오 — 처음으로"><span class="brand-mark"><i data-lucide="audio-lines"></i></span><span class="brand-text"><strong>송쌤과학</strong><small>AI 보이스 스튜디오</small></span></a>
+  <div class="header-context"><span>글을 넣으면 AI 목소리 음원으로 · 저장까지 한 번에</span><span class="header-divider"></span><time id="today"></time></div>
+  <div class="header-actions">
+    <button class="btn" id="resaveBtn" type="button" disabled title="방금 만든 음원을 다시 내려받기"><i data-lucide="download"></i><span class="label">다시 저장</span></button>
+    <button class="btn primary" id="goBtn" type="button" title="만들고 바로 저장 (Ctrl+S · Ctrl+Enter)"><i data-lucide="audio-lines"></i><span class="label" id="goLabel">만들고 저장<span class="fmt" id="goFmt"> · MP3</span></span></button>
+    <button class="utility-btn" type="button" data-open="help" title="도움말 · 단축키 (F1)" aria-label="도움말"><i data-lucide="circle-help"></i></button>
+    <button class="utility-btn" id="themeBtn" type="button" title="밝은/어두운 화면 전환" aria-label="화면 모드 전환"><i data-lucide="moon"></i><i data-lucide="sun"></i></button>
+  </div>
+</header>
+
+<div class="app-body">
+<!-- ③ 레일: 목소리 묶음(송쌤과학 · Supertonic 3) + 걸러 보기(숫자 단축키) + 아래 대본 요약 -->
+<nav class="rail" aria-label="목소리 묶음">
+  <div class="rail-heading"><span class="rail-title">목소리 <span class="rail-count" id="voiceCount">30</span></span><button class="rail-toggle" id="railToggle" type="button" aria-expanded="true" aria-label="목소리 묶음 접기" title="목소리 묶음 접기 ( [ )"><i data-lucide="panel-left-close"></i></button></div>
+  <section class="rail-group"><p class="group-label" id="ssGroupLabel">송쌤과학 목소리 · 상업 수업 가능</p>
+    <button class="rail-item" type="button" data-filter="songsam:all"><i data-lucide="sparkles"></i><span>전체</span><span class="key">1</span><span class="dot"></span></button>
+    <button class="rail-item" type="button" data-filter="songsam:clear"><i data-lucide="presentation"></i><span>또렷한 설명</span><span class="key">2</span><span class="dot"></span></button>
+    <button class="rail-item" type="button" data-filter="songsam:bright"><i data-lucide="smile"></i><span>밝고 발랄</span><span class="key">3</span><span class="dot"></span></button>
+    <button class="rail-item" type="button" data-filter="songsam:student"><i data-lucide="backpack"></i><span>학생 톤</span><span class="key">4</span><span class="dot"></span></button>
+    <button class="rail-item" type="button" data-filter="songsam:teacher"><i data-lucide="graduation-cap"></i><span>선생님</span><span class="key">5</span><span class="dot"></span></button>
+  </section>
+  <section class="rail-group"><p class="group-label">Supertonic 3 · 사용 조건 확인</p>
+    <button class="rail-item" type="button" data-filter="supertonic:all"><i data-lucide="audio-waveform"></i><span>전체</span><span class="key">6</span><span class="dot"></span></button>
+    <button class="rail-item" type="button" data-filter="supertonic:m"><i data-lucide="user"></i><span>남성</span><span class="key">7</span><span class="dot"></span></button>
+    <button class="rail-item" type="button" data-filter="supertonic:f"><i data-lucide="user-round"></i><span>여성</span><span class="key">8</span><span class="dot"></span></button>
+  </section>
+  <div class="rail-foot"><button class="rail-summary" type="button" id="railSummary" title="글 파일(.txt) 불러오기 (Ctrl+O)"><i data-lucide="file-text"></i><span><strong id="sumText">대본 0줄</strong><small>글 파일 · 끌어 놓기 · Ctrl+V</small></span></button></div>
+</nav>
+
+<!-- ④ 작업 공간: 경로 + 상태 알약 → 설정 카드(목소리 · 읽는 방법) | 작업 무대(대본 · 결과) -->
+<main class="workspace">
+  <div class="context">
+    <span class="crumbs"><span class="crumb-main"><i data-lucide="file-text"></i><span id="ctxScript">새 대본</span></span><span class="crumb-slash">/</span><span id="ctxFilter">송쌤과학 목소리</span></span>
+    <span class="pill idle" id="pill"><span class="live-dot"></span><span id="pillText">읽을 글을 써 주세요</span></span>
+  </div>
+  <div class="editor">
+    <aside class="sidebar card" aria-label="목소리와 읽는 방법">
+      <div class="panel active">
+        <div class="panel-intro"><h2 id="panelTitle">송쌤과학 목소리</h2><p id="panelDesc"></p></div>
+        <div class="group">
+          <div class="group-title"><i data-lucide="mic"></i>목소리 <span class="group-note">누르면 고른 줄의 목소리가 바뀌어요</span></div>
+          <ul class="voice-list" id="voiceList" role="listbox" aria-label="목소리"></ul>
+        </div>
+        <hr class="divider">
+        <div class="group">
+          <div class="group-title"><i data-lucide="sliders-horizontal"></i>읽는 방법</div>
+          <div class="field"><label for="speed">빠르기 <span class="val">×<output id="speedVal">1.0</output></span></label><input type="range" id="speed" min="0.8" max="1.5" step="0.05" value="1"></div>
+          <div class="field"><label>문장 사이 쉼</label><div class="seg" id="pauseSeg" role="group" aria-label="문장 사이 쉼"><button type="button" data-v="short">짧게</button><button type="button" data-v="normal">보통</button><button type="button" data-v="long">길게</button></div></div>
+        </div>
+        <div class="group">
+          <div class="group-title"><i data-lucide="download"></i>저장</div>
+          <div class="field"><label>형식</label><div class="seg" id="fmtSeg" role="group" aria-label="저장 형식"><button type="button" data-v="mp3">MP3 · 어디서나 재생</button><button type="button" data-v="wav">WAV · 다시 편집할 때</button></div></div>
+          <label class="check"><input type="checkbox" id="srt">자막(SRT)도 함께 · ZIP 하나로</label>
+          <div class="field field-top"><label for="fileName">파일 이름</label><input class="input" id="fileName" type="text" spellcheck="false" autocomplete="off"></div>
+          <div class="hint" id="modelHint">처음 한 번만 목소리 모델을 받아요(<b>송쌤과학 약 <span class="ss-mb">77</span> MB</b> · <b>Supertonic 3 약 <span class="st-mb">401</span> MB</b>). 받은 뒤에는 인터넷 없이도 돼요.</div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="stage card" aria-label="대본">
+      <div class="stage-bar">
+        <button class="btn ghost" id="addLine" type="button" title="줄 더하기 (Shift+Enter)"><i data-lucide="plus"></i><span class="label">줄 더하기</span></button>
+        <span class="stage-sep"></span>
+        <span class="stage-tip" id="stageTip">줄마다 한 사람이 읽어요 · 번호를 끌거나 ▲▼로 순서를 바꿔요</span>
+        <span class="stage-meta" id="scriptMeta">0자 · 약 0초</span>
+      </div>
+      <div class="stage-body">
+        <div class="stage-col">
+          <ol class="lines" id="lines"></ol>
+          <div class="drop" id="drop" hidden>
+            <span class="drop-icon"><i data-lucide="message-square-text"></i></span>
+            <p class="eyebrow">Start writing</p>
+            <h2>읽을 글을 넣어 주세요</h2>
+            <p>아래 첫 줄에 바로 쓰거나, 글 파일(.txt)을 이곳에 끌어다 놓으세요.<br>복사한 글은 <b>Ctrl+V</b>로 붙여 넣으면 문단마다 줄이 나뉘어요.</p>
+            <div class="drop-actions"><button class="btn primary lg" type="button" id="openBtn2">글 파일 불러오기</button><button class="btn lg" type="button" id="sampleBtn2">예시 대본 넣기</button></div>
+            <div class="chips"><span>줄마다 목소리</span><span>숫자 · 단위 읽기</span><span>MP3 · WAV</span><span>자막 SRT</span></div>
+          </div>
+          <div class="progress-card" id="progress" hidden role="status"><div class="progress-head"><b id="progressText">준비하고 있어요</b><button class="btn" id="cancelBtn" type="button"><i data-lucide="square"></i>멈추기</button></div><div class="progress-bar"><i id="progressBar"></i></div></div>
+          <div class="result card" id="result" hidden>
+            <div class="result-head"><span class="result-ic"><i data-lucide="check"></i></span><div class="result-txt"><p class="eyebrow">All done · 완료 목록 <span id="resultCount"></span></p><b id="resultTitle">저장했어요</b><small id="resultInfo"></small></div><button class="btn ghost result-clear" id="resultClear" type="button" title="완료 목록 비우기 · 내려받은 파일은 그대로예요" hidden><i data-lucide="list-x"></i><span class="label">목록 비우기</span></button></div>
+            <ul class="res-list" id="resultList" aria-label="완료 목록"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="stage-foot">© 2026 송쌤과학 · 글과 소리는 이 기기 밖으로 나가지 않아요 · 영상 · 자료에 쓸 때는 AI 음성임을 밝혀 주세요</div>
+    </section>
+  </div>
+</main>
+</div>
+
+<input type="file" id="fileInput" accept=".txt,text/plain" hidden>
+
+<!-- ⑤ 도움말 창 -->
+<div class="modal" id="help" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="modal-card wide">
+    <div class="modal-head"><span class="modal-ic"><i data-lucide="circle-help"></i></span><div><h2 class="modal-title" id="helpTitle">이렇게 써요</h2><p class="modal-desc">글과 소리는 이 기기 밖으로 나가지 않아요. 모든 처리는 브라우저 안에서 끝나요.</p></div></div>
+    <p class="modal-p"><b>파일이 어디로 가나요?</b> 어디에도 보내지 않아요. 바깥으로 나가는 요청은 처음 한 번 목소리 모델 · 글꼴 · 아이콘을 받을 때뿐이에요. 받은 모델은 이 브라우저에 보관돼요.</p>
+    <div class="steps">
+      <div class="step"><span class="step-num">1</span><div><b>목소리 고르기</b><br>왼쪽 묶음 · 숫자 1~8, ▶ 미리 듣기</div></div>
+      <div class="step"><span class="step-num">2</span><div><b>대본 쓰기</b><br>줄마다 한 사람 · ▶ 들어 보기 · 마음에 안 들면 ⟳ 다른 소리로 다시 만들기</div></div>
+      <div class="step"><span class="step-num">3</span><div><b>만들고 저장</b><br>하나로 합칠지 줄마다 따로 만들지 골라요</div></div>
+    </div>
+    <table class="keys"><tbody>
+      <tr><td><kbd>1</kbd>~<kbd>8</kbd></td><td>목소리 묶음 바꾸기</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd> · <kbd>Ctrl</kbd>+<kbd>Enter</kbd></td><td>만들고 저장</td></tr>
+      <tr><td><kbd>Shift</kbd>+<kbd>Enter</kbd></td><td>줄 더하기(글을 쓰는 중에)</td></tr>
+      <tr><td><kbd>Alt</kbd>+<kbd>↑</kbd> · <kbd>Alt</kbd>+<kbd>↓</kbd></td><td>줄 순서 바꾸기(번호를 끌거나 ▲▼ 단추로도 돼요)</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>글 파일 불러오기</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> · <kbd>Ctrl</kbd>+<kbd>Y</kbd></td><td>실행 취소 · 다시 실행(줄 · 목소리 바꾸기)</td></tr>
+      <tr><td><kbd>[</kbd></td><td>목소리 묶음 접기 · 펴기</td></tr>
+      <tr><td><kbd>F1</kbd> · <kbd>Esc</kbd></td><td>이 도움말 · 닫기</td></tr>
+    </tbody></table>
+    <div class="modal-actions"><button class="btn" type="button" data-open-license>라이선스 · 출처</button><button class="btn primary" type="button" data-close>알겠어요</button></div>
+  </div>
+</div>
+
+<!-- 라이선스 · 출처 창 -->
+<div class="modal" id="license" role="dialog" aria-modal="true" aria-labelledby="licTitle">
+  <div class="modal-card wide">
+    <div class="modal-head"><span class="modal-ic"><i data-lucide="scale"></i></span><div><h2 class="modal-title" id="licTitle">라이선스 · 출처</h2><p class="modal-desc">어떤 목소리를 어떤 조건으로 쓸 수 있는지 적었어요.</p></div></div>
+    <p class="modal-p"><b>송쌤과학 목소리</b> — 송쌤과학이 직접 학습한 한국어 가상 목소리예요. 실제 사람의 녹음이나 목소리 복제가 아니에요. <b>상업 수업 · 유료 연수 영상에도 쓸 수 있어요.</b></p>
+    <p class="modal-p small" id="songsamCredit"></p>
+    <p class="modal-p"><b>Supertonic 3 목소리</b> — Supertone Inc. 의 공개 모델(모델 BigScience OpenRAIL-M · 코드 MIT). 사칭 · 미성년자에게 해가 되는 쓰임 · AI 생성을 밝히지 않은 배포는 할 수 없어요.</p>
+    <p class="modal-p small">함께 쓴 소프트웨어: onnxruntime-web(MIT) · fflate(MIT) · lamejs(LGPL-3.0, MP3 만들기 — 따로 떨어진 파일이라 바꿔 끼울 수 있어요) · Pretendard(SIL OFL 1.1) · Lucide 아이콘(ISC)</p>
+    <div class="modal-actions"><button class="btn primary" type="button" data-close>닫기</button></div>
+  </div>
+</div>
+
+<!-- Supertonic 3 사용 조건 창 -->
+<div class="modal" id="consent" role="dialog" aria-modal="true" aria-labelledby="conTitle">
+  <div class="modal-card">
+    <div class="modal-head"><span class="modal-ic warn"><i data-lucide="shield-check"></i></span><div><h2 class="modal-title" id="conTitle">Supertonic 3 사용 조건</h2><p class="modal-desc">처음 한 번 모델(약 <span class="st-mb">401</span> MB)을 받아 이 기기에 보관해요.</p></div></div>
+    <ul class="modal-list"><li>AI로 만든 음성임을 밝히지 않고 배포하지 않아요.</li><li>실제 사람을 흉내 내거나 속이는 데 쓰지 않아요.</li><li>미성년자에게 해가 되는 데 쓰지 않아요.</li></ul>
+    <label class="check"><input type="checkbox" id="consentChk">위 조건을 읽었고 지키겠어요.</label>
+    <div class="modal-actions"><button class="btn" type="button" data-close>닫기</button><button class="btn primary" type="button" id="consentOk" disabled>동의하고 계속</button></div>
+  </div>
+</div>
+<!-- 저장 방식 확인 창: 하나로 합치기 · 줄마다 따로 -->
+<div class="modal" id="modeAsk" role="dialog" aria-modal="true" aria-labelledby="modeTitle">
+  <div class="modal-card mode">
+    <div class="modal-head"><span class="modal-ic"><i data-lucide="list-ordered"></i></span><div><h2 class="modal-title" id="modeTitle">어떻게 저장할까요?</h2><p class="modal-desc" id="modeSub"></p></div></div>
+    <ol class="mode-order" id="modeOrder" aria-label="만들 순서"></ol>
+    <div class="mode-opts" role="group" aria-label="저장 방식">
+      <button class="mode-opt" type="button" data-mode="merge"><span class="mode-ic"><i data-lucide="layers"></i></span><span class="mode-txt"><b>하나로 합치기</b><small id="modeMergeInfo"></small><code id="modeMergeName"></code></span></button>
+      <button class="mode-opt" type="button" data-mode="split"><span class="mode-ic"><i data-lucide="files"></i></span><span class="mode-txt"><b>줄마다 따로</b><small id="modeSplitInfo"></small><code id="modeSplitName"></code></span></button>
+    </div>
+    <label class="check mode-zip"><input type="checkbox" id="modeZip">따로 만들 때 ZIP 하나로 묶어 받기<small id="modeZipNote"></small></label>
+    <p class="modal-p small mode-note" id="modeNote">따로 만들면 파일을 여러 개 내려받아요. 브라우저가 「여러 파일 다운로드」를 물으면 <b>허용</b>을 눌러 주세요.</p>
+    <div class="modal-actions"><span class="mode-tip">순서는 대본에서 번호를 끌거나 ▲▼로 바꿀 수 있어요</span><button class="btn" type="button" data-close>취소</button></div>
+  </div>
+</div>
+<div id="toasts" aria-live="polite" role="status"></div>
+</body>
+</html>
